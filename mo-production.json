@@ -1,0 +1,152 @@
+{
+  "family": "backend-prod-env",
+  "containerDefinitions": [
+    {
+      "name": "backend-prod-container",
+      "image": "058264281863.dkr.ecr.us-east-1.amazonaws.com/mo-production:latest",
+      "cpu": 2048,
+      "memory": 4096,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/backend-prod-env",
+          "awslogs-region": "us-east-1",
+          "awslogs-create-group": "true",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "environment": [
+        {
+          "name": "NODE_ENV",
+          "value": "staging"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "PROD_PORT",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_PORT"
+        },
+        {
+          "name": "PROD_MO_FEE_ADDR",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_MO_FEE_ADDR"
+        },
+        {
+          "name": "PROD_USDC_ADDRESS",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_USDC_ADDRESS"
+        },
+        {
+          "name": "PROD_LOGGER",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_LOGGER"
+        },
+        {
+          "name": "PROD_NODE_ADDRESS",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_NODE_ADDRESS"
+        },
+        {
+          "name": "PROD_DATABASE_URL",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_DATABASE_URL"
+        },
+        {
+          "name": "PROD_JWT_SECRET",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_JWT_SECRET"
+        },
+        {
+          "name": "PROD_FRONTEND_URL",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_FRONTEND_URL"
+        },
+        {
+          "name": "PROD_BACKEND_URL",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_BACKEND_URL"
+        },
+        {
+          "name": "PROD_GOOGLE_CLIENT_ID",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_GOOGLE_CLIENT_ID"
+        },
+        {
+          "name": "PROD_GOOGLE_SECRET",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_GOOGLE_SECRET"
+        },
+        {
+          "name": "PROD_SENDGRID_API_KEY",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_SENDGRID_API_KEY"
+        },
+        {
+          "name": "PROD_SENDGRID_EMAIL",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_SENDGRID_EMAIL"
+        },
+        {
+          "name": "PROD_HEDERA_NETWORK",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_HEDERA_NETWORK"
+        },
+        {
+          "name": "PROD_HEDERA_ACCOUNT_ID",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_HEDERA_ACCOUNT_ID"
+        },
+        {
+          "name": "PROD_HEDERA_PUBLIC_KEY",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_HEDERA_PUBLIC_KEY"
+        },
+        {
+          "name": "PROD_HEDERA_PRIVATE_KEY",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_HEDERA_PRIVATE_KEY"
+        },
+        {
+          "name": "PROD_HEDERA_TESTNET_ENDPOINT",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_HEDERA_TESTNET_ENDPOINT"
+        },
+        {
+          "name": "PROD_S3_REGION",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_S3_REGION"
+        },
+        {
+          "name": "PROD_S3_BUCKET",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_S3_BUCKET"
+        },
+        {
+          "name": "PROD_S3_ACCESS_ID",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_S3_ACCESS_ID"
+        },
+        {
+          "name": "PROD_S3_SECRET_ACCESS_KEY",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_S3_SECRET_ACCESS_KEY"
+        },
+        {
+          "name": "PROD_WEB3_TOKEN_NAME",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_WEB3_TOKEN_NAME"
+        },
+        {
+          "name": "PROD_WEB3_STORAGE",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_WEB3_STORAGE"
+        },
+        {
+          "name": "PROD_WEB3_STORAGE_KEY",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_WEB3_STORAGE_KEY"
+        },
+        {
+          "name": "PROD_MQTT_CONN",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_MQTT_CONN"
+        },
+        {
+          "name": "PROD_BYTECODE_FILEID",
+          "valueFrom": "arn:aws:ssm:us-east-1:058264281863:parameter/PROD_BYTECODE_FILEID"
+        }
+      ]
+    }
+  ],
+  "executionRoleArn": "arn:aws:iam::058264281863:role/ecsTaskExecutionRoleProduction",
+  "networkMode": "awsvpc",
+  "runtimePlatform": {
+    "operatingSystemFamily": "LINUX"
+  },
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "2048",
+  "memory": "4096"
+}

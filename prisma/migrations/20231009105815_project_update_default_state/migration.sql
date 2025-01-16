@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Projects" ALTER COLUMN "state" SET DEFAULT 'INITILIZED';

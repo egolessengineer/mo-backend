@@ -1,0 +1,869 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+//Prsima configuration
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+  // previewFeatures = ["fullTextSearchPostgres"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Define the enum types
+enum TokenType {
+  Login
+  ForgotPasswordToken
+  EmailVerificationToken
+  OTP
+  PurchaserInviteToken
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum MilestoneStatus {
+  INIT
+  IN_PROGRESS
+  IN_REVIEW
+  REWORK
+  COMPLETED
+  STOP
+  FORCE_CLOSED
+  HOLD //for submilestones
+}
+
+enum PenalityType {
+  PERCENT
+}
+
+enum PenaltyType {
+  WARNING
+  PENALTY
+}
+
+enum AmountType {
+  PERCENT
+  AMOUNT
+}
+
+enum PenaltyDurationType {
+  ByHour
+  ByDay
+}
+
+enum RoyaltyType {
+  PRE_PAYMENT_ROYALTY
+  POST_KPI_ROYALTY
+}
+
+enum milestoneType {
+  milestone
+  submilestone
+}
+
+enum documentType {
+  RESEARCH
+  TermAndCondition
+  Deliverables
+  DISPUTE_EVIDENCE
+  DISPUTE_RESOLUTION
+  REWORK_DOC
+}
+
+enum Category {
+  DESIGN
+  RESEARCH
+  DEVELOPMENT
+  TESTING
+  OTHER
+  ACCOUNT_MANAGEMENT
+  ACTOR_ACTRESS
+  AD_OPERATIONS
+  ADVERTISING_COPYWRITING
+  AI_ML_DEVELOPMENT
+  APP_DEVELOPMENT
+  AUDIO_ENGINEERING
+  AUGMENTED_REALITY
+  BACKEND_DEVELOPMENT
+  BLOGGING
+  BRAND_CONSULTING
+  BRAND_MANAGEMENT
+  BRAND_REPRESENTATION
+  BRAND_STRATEGY
+  CAMPAIGN_MANAGEMENT
+  CATERING
+  CHEF
+  CHIEF_BRAND_OFFICER
+  CHIEF_MARKETING_OFFICER
+  CHOREOGRAPHY
+  CINEMATOGRAPHY
+  CIRCUS_PERFORMANCE
+  COLOR_GRADING
+  COMMUNICATIONS
+  COMPOSITION
+  CONCEPT_ART_DESIGN
+  CONTENT_MARKETING
+  CONTENT_STRATEGY
+  CONTENT_WRITING
+  COPYWRITING
+  COSTUME_DESIGN
+  CREATIVE_DIRECTION
+  CREATIVE_WRITING
+  CULINARY_BLOGGING
+  CULINARY_INSTRUCTION
+  DANCE
+  DATABASE_ADMINISTRATION
+  DEVOPS
+  DIRECTION
+  DIGITAL_MARKETING
+  DIGITAL_PAINTING
+  DIRECTOR_OF_PHOTOGRAPHY
+  DOCUMENTARY_FILMMAKING
+  DJING
+  DRONE_PHOTOGRAPH_
+  EDITORIAL_WRITING
+  EVENT_PLANNING
+  EXHIBITION_DESIGN
+  FASHION_DESIGN
+  FILM_EDITING
+  FOLEY_ART
+  FOOD_PHOTOGRAPHY
+  FOOD_STYLING
+  FRONTEND_DEVELOPMENT
+  FULL_STACK_DEVELOPMENT
+  GAME_DESIGN
+  GAME_PROGRAMMING
+  GHOSTWRITING
+  GRAPHIC_DESIGN
+  ILLUSTRATION
+  IMPROVISATION
+  INTERACTIVE_INSTALLATION
+  INTERACTIVE_MEDIA
+  INTERACTIVE_STORYTELLING
+  INTERIOR_DESIGN
+  IT_CONSULTING
+  JINGLE_WRITING
+  LANDSCAPE_DESIGN
+  LOGO_DESIGN
+  MARKET_RESEARCH
+  MARKETING_ANALYSIS
+  MARKETING_COORDINATION
+  MARKETING_DATA_ANALYSIS
+  MARKETING_MANAGEMENT
+  MEDIA_PLANNING
+  MENU_DESIGN
+  MIXOLOGY
+  MOBILE_APP_DEVELOPMENT
+  MOTION_GRAPHICS_DESIGN
+  MURAL_DESIGN
+  MUSIC
+  MUSIC_ARRANGEMENT
+  MUSIC_PRODUCTIO_
+  PACKAGING_DESIGN
+  PASTRY_CHEF
+  PHOTOGRAPHY
+  PHOTOJOURNALISM
+  POETRY
+  PRINT_DESIGN
+  PUBLIC_RELATIONS
+  PUPPETRY
+  QUALITY_ASSURANCE_TESTING
+  RECIPE_DEVELOPMENT
+  SCREENWRITING
+  SCRIPTWRITING
+  SEARCH_ENGINE_OPTIMIZATION
+  SESSION_MUSICIANSHIP
+  SET_DESIGN
+  SINGING
+  SOCIAL_MEDIA_CONTENT_CREATION
+  SOCIAL_MEDIA_MANAGEMENT
+  SOCIAL_MEDIA_STRATEGY
+  SOFTWARE_PROJECT_MANAGEMENT
+  SOFTWARE_ARCHITECTURE
+  SOFTWARE_DEVELOPMENT
+  SOFTWARE_ENGINEERING
+  SOUND_DESIGN
+  SPEECHWRITING
+  STAND_UP_COMEDY
+  STREET_ART_DESIGN
+  STREET_PERFORMANCE
+  STORYBOARD_DESIGN
+  STORYTELLING
+  SYSTEMS_ANALYSIS
+  TECHNICAL_SUPPORT
+  TECHNICAL_WRITING
+  UI_UX_DESIG_
+  UI_UX_PROTOTYPING
+  USER_ACQUISITION
+  USER_EXPERIENCE_DESIGN
+  VIDEOGRAPHY
+  VIDEO_CONTENT_PRODUCTION
+  VOICEOVER_ARTISTRY
+  VIRAL_MARKETING
+  VISUAL_EFFECTS
+  VISUAL_MERCHANDISING
+  VIRTUAL_REALITY
+  VOICE_ACTING
+  WEB_DESIGN
+}
+
+enum DraftType {
+  PROJECT_DETAILS
+  DOCUMENT
+  ADD_PROVIDER
+  MILESTONES
+  SUB_MILESTONES
+  ADD_IP
+}
+
+enum ProjectCurrency {
+  HBAR
+  USDC
+}
+
+enum ProjectUsers {
+  PURCHASER
+  CP
+  IP
+}
+
+enum DurationType {
+  Days
+  Weeks
+  Months
+  Year
+}
+
+enum Role {
+  PROVIDER
+  PURCHASER
+  ADMIN
+}
+
+enum ProjectStatus {
+  ASSIGNED
+  UNASSIGNED
+  IN_PROGRESS
+  COMPLETE
+}
+
+enum ProjectState {
+  INITILIZED
+  NEW_PROJECT
+  ADD_MILESTONES
+  ADD_ESCROW
+  CONTRACT_DEPLOYED
+  COMPLETE
+}
+
+enum FundTransferType {
+  ProjectCompleted
+  MilestoneCompleted
+}
+
+enum FundingType {
+  PROJECT
+  MILESTONE
+}
+
+enum ContractDeployStatus {
+  PENDING
+  IN_PROGRESS
+  SUCCESS
+  FAILED
+}
+
+enum EndPointType {
+  DATE
+  DATETIME
+}
+
+enum Error {
+  HEDERA
+  API
+}
+
+enum AcceptedStatus {
+  ACCEPTED
+  REJECTED
+  PENDING
+}
+
+model User {
+  id                   String    @id @default(uuid()) // Assuming "uuid" is a string
+  name                 String?
+  email                String?   @unique
+  password             String?
+  walletAddress        String?
+  isEmailVerified      Boolean?  @default(false)
+  isAboutComplete      Boolean?  @default(false)
+  isAddressComplete    Boolean?  @default(false)
+  isExperienceComplete Boolean?  @default(false)
+  role                 Role?
+  isActive             Boolean?  @default(true)
+  updatedAt            DateTime? @updatedAt
+  createdAt            DateTime? @default(now())
+  deleted              Boolean?  @default(false)
+
+  // Define relationships
+  Address             Address[]
+  VerficationToken    VerficationToken[]
+  About               About?
+  Experiences         Experiences[]
+  ProjectMembers      ProjectMembers[]
+  Permissions         Permissions[]
+  ProjectsEditor      Projects[]         @relation(name: "currentEditor")
+  Milestones          Milestones[]
+  Transactions        Transactions[]
+  Dispute             Dispute[]
+  NotesTo             Notes[]            @relation("To")
+  NoteFrom            Notes[]            @relation("From")
+  Creator             Teams[]            @relation("Creator")
+  TeamMembers         TeamMembers[]      @relation("Member")
+  Notifications       Notifications[]
+  ProviderListCreator ProviderList[]     @relation("ProviderListCreator")
+  ProviderListMember  ProviderList[]     @relation("ProviderListMember")
+  Purchaser           Collaborators[]    @relation("PurchaserId")
+  Collaborators       Collaborators[]    @relation("CollaboratorEmail")
+}
+
+model Address {
+  id         String    @id @default(uuid()) // Assuming "uuid" is a string
+  street     String?
+  city       String?
+  state      String?
+  postalCode String?
+  country    String?
+  userId     String?   @unique
+  updatedAt  DateTime? @updatedAt
+  createdAt  DateTime? @default(now())
+  deleted    Boolean?  @default(false)
+
+  // Define relationships
+  User User? @relation(fields: [userId], references: [id])
+}
+
+model VerficationToken {
+  id        String    @id @default(uuid()) // Assuming "uuid" is a string
+  tokenType TokenType
+  token     String?
+  userId    String?
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  deleted   Boolean?  @default(false)
+
+  // Define relationships
+  User User? @relation(fields: [userId], references: [id])
+}
+
+model About {
+  id                 String    @id @default(uuid()) // Assuming "uuid" is a string
+  name               String?
+  about              String?
+  gender             Gender?
+  portfolioLink      String[]
+  countryCode        String?
+  phoneNumber        String?
+  isPhoneVerified    Boolean?  @default(false)
+  profilePictureLink String?
+  userId             String?   @unique
+  updatedAt          DateTime? @updatedAt
+  createdAt          DateTime? @default(now())
+  deleted            Boolean?  @default(false)
+
+  // Define relationships
+  User User? @relation(fields: [userId], references: [id])
+}
+
+model Experiences {
+  id        String    @id @default(uuid()) // Assuming "uuid" is a string
+  position  String?
+  company   String?
+  startDate DateTime?
+  endDate   DateTime?
+  userId    String?
+  updatedAt DateTime? @updatedAt
+  createdAt DateTime? @default(now())
+  deleted   Boolean?  @default(false)
+
+  // Define relationships
+  User User? @relation(fields: [userId], references: [id])
+}
+
+model Milestones {
+  id                   String            @id @default(uuid()) // Assuming "uuid" is a string
+  title                String?
+  description          String?
+  requirements         String?
+  endPoint             Float?
+  endPointType         EndPointType?
+  startDate            DateTime?
+  endDate              DateTime?
+  actualEndDate        DateTime?
+  fundAllocation       Float?
+  revisions            Int?
+  revisionsCounter     Int?              @default(0)
+  sequenceNumber       Int?
+  acceptanceCriteria   String?
+  isPenaltyExcluded    Boolean?          @default(true)
+  milestoneStatus      MilestoneStatus?  @default(INIT)
+  fundTransfer         FundTransferType?
+  dateAssigned         DateTime?
+  AssignedTo           String?
+  milestoneType        milestoneType?
+  royaltyType          RoyaltyType?
+  isDeployedOnContract String?
+  royaltyValueIn       AmountType        @default(PERCENT)
+  royaltyAmount        Float?
+  milestoneId          String?
+  projectId            String?
+  deliverablesLink     String[]
+  reworkDocs           String[]          @default([])
+  reworkComment        String?
+  lastTransactionDate  String?
+  createdAt            DateTime?         @default(now())
+  updatedAt            DateTime?         @updatedAt
+  deleted              Boolean?          @default(false)
+
+  // Define relationships
+  User                 User?            @relation(fields: [AssignedTo], references: [id])
+  Project              Projects?        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  PenalityBreach       PenalityBreach[]
+  ParentMilestone      Milestones?      @relation("subMilestones", fields: [milestoneId], references: [id])
+  Milestones           Milestones[]     @relation("subMilestones") //self references
+  IsDeployedOnContract Transactions?    @relation("IsDeployedOnContract", fields: [isDeployedOnContract], references: [id])
+  Funds                Funds?
+  Transactions         Transactions[]
+  Dispute              Dispute[]
+  Notes                Notes[]
+}
+
+model PenalityBreach {
+  id                String               @id @default(uuid()) // Assuming "uuid" is a string
+  milestoneId       String?
+  penalityType      PenaltyType          @default(PENALTY)
+  valueIn           AmountType           @default(AMOUNT)
+  pentality         Float?
+  pentalityDuration PenaltyDurationType?
+  timeperiod        Int?
+  updatedAt         DateTime?            @updatedAt
+  createdAt         DateTime?            @default(now())
+  deleted           Boolean?             @default(false)
+
+  // Define relationships
+  Milestone Milestones? @relation(fields: [milestoneId], references: [id])
+}
+
+model Projects {
+  id                           String            @id @default(uuid()) // Assuming "uuid" is a string
+  status                       ProjectStatus?    @default(UNASSIGNED)
+  state                        ProjectState?     @default(INITILIZED)
+  isIndividualProvidersVisible Boolean?          @default(false)
+  isFundFreezed                Boolean?          @default(false)
+  providerAssignedDate         DateTime?
+  currentEditor                String?
+  assignedFundTo               FundingType?
+  fundTransferType             FundTransferType?
+  web3Deliverables             String?
+  hcsTopicId                   String?
+  lastTransactionDate          String?
+  freeBalanceReleased          Boolean?          @default(false)
+  enableFreeFundRelease        String?
+  updatedAt                    DateTime?         @updatedAt
+  createdAt                    DateTime?         @default(now())
+  deleted                      Boolean?          @default(false)
+
+  // Define relationships
+  CurrentEditor  User?            @relation(name: "currentEditor", fields: [currentEditor], references: [id])
+  Documents      Documents?
+  ProjectDetails ProjectDetails?
+  ProjectMembers ProjectMembers[]
+  Escrow         Escrow?
+  Permissions    Permissions[]
+  Milestones     Milestones[]
+  DRAFTS         DRAFTS[]
+  Transactions   Transactions[]
+  Dispute        Dispute[]
+  Notes          Notes[]
+}
+
+model DocumentsLink {
+  id        String       @id @default(uuid()) // Assuming "uuid" is a string
+  type      documentType
+  fileName  String?
+  mimeType  String?
+  createdAt DateTime?    @default(now())
+  updatedAt DateTime?    @updatedAt
+  deleted   Boolean?     @default(false)
+  url       String       @db.VarChar()
+  // Define relationships
+}
+
+model Documents {
+  id                 String    @id @default(uuid()) // Assuming "uuid" is a string
+  requirements       String?
+  termsAndConditions String?
+  remark             String?
+  documentLinks      String[] // Assuming "uuid" is a string array
+  projectId          String?   @unique
+  updatedAt          DateTime? @updatedAt
+  createdAt          DateTime? @default(now())
+  deleted            Boolean?  @default(false)
+
+  // Define relationships
+  Project Projects? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model ProjectDetails {
+  id               String           @id @default(uuid()) // Assuming "uuid" is a string
+  title            String?
+  description      String?
+  category         Category?
+  currency         ProjectCurrency?
+  duration         Float?
+  durationType     DurationType?
+  totalProjectFund String?
+  leftProjectFund  String?
+  royaltyType      RoyaltyType?     @default(POST_KPI_ROYALTY)
+  postKpiRoyalty   Float?
+  scope            String?
+  deliverables     String?
+  deliverablesByCP String?
+  projectId        String?          @unique
+  createdAt        DateTime?        @default(now())
+  updatedAt        DateTime?        @updatedAt
+  deleted          Boolean?         @default(false)
+  requirements     String?
+  fundTransfered   Boolean?         @default(false)
+  // Define relationships
+  Project          Projects?        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model ProjectMembers {
+  id           String        @id @default(uuid()) // Assuming "uuid" is a string
+  userId       String?
+  projectUsers ProjectUsers?
+  projectId    String?
+  updatedAt    DateTime?     @updatedAt
+  createdAt    DateTime?     @default(now())
+  deleted      Boolean?      @default(false)
+
+  // Define relationships
+  User              User?     @relation(fields: [userId], references: [id])
+  Project           Projects? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  RaisedByDispute   Dispute[] @relation("RaisedBy")
+  RaisedToDispute   Dispute[] @relation("RaisedTo")
+  InFavourOfDispute Dispute[] @relation("InFavourOf")
+
+  //unique constraints
+  @@unique([userId, projectId], name: "projectmemberIdentifier")
+}
+
+model DRAFTS {
+  id        String     @id @default(uuid()) // Assuming "uuid" is a string
+  draftType DraftType?
+  projectId String?
+  value     Json?
+  createdAt DateTime?  @default(now())
+  updatedAt DateTime?  @updatedAt
+  deleted   String?
+
+  // Define relationships
+  Project Projects? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  //making unique compound constraint
+  @@unique([draftType, projectId, deleted])
+}
+
+model Permissions {
+  id                         String    @id @default(uuid()) // Assuming "uuid" is a string
+  userId                     String?
+  projectId                  String?
+  ProjectDetailsDuration     Boolean?  @default(true)
+  ProjectTotalProjectFund    Boolean?  @default(true)
+  ProjectPenalty             Boolean?  @default(true)
+  DocumentTermsAndConditions Boolean?  @default(true)
+  MilestoneFundAllocation    Boolean?  @default(true)
+  MilestoneRevisionsCounter  Boolean?  @default(true)
+  MilestonesShowAll          Boolean?  @default(true)
+  SubMilestoneShowAll        Boolean?  @default(true)
+  FundsShowIndividualFund    Boolean?  @default(true)
+  FundsTab                   Boolean?  @default(true)
+  FundAllocation             Boolean?  @default(true)
+  FundLeft                   Boolean?  @default(true)
+  Members                    Boolean?  @default(true)
+  EscrowProjectDetails       Boolean?  @default(true)
+  EscrowpartiesInvolved      Boolean?  @default(true)
+  EscrowMilestoneFund        Boolean?  @default(true)
+  EscrowRoyalty              Boolean?  @default(true)
+  EscrowPenalty              Boolean?  @default(true)
+  updatedAt                  DateTime? @updatedAt
+  createdAt                  DateTime? @default(now())
+  deleted                    Boolean?  @default(false)
+
+  // Define relationships
+  User    User?     @relation(fields: [userId], references: [id])
+  Project Projects? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  //unique constraints
+  @@unique([userId, projectId], name: "permissionIdentifier")
+}
+
+model Escrow {
+  id                      String                @id @default(uuid()) // Assuming "uuid" is a string
+  projectId               String?               @unique
+  escrowContractId        String?
+  escrowAddress           String?
+  escrowDeployedStatus    ContractDeployStatus? @default(PENDING)
+  addMilestoneStatus      ContractDeployStatus? @default(PENDING)
+  transferOwnershipStatus ContractDeployStatus? @default(PENDING)
+  error                   Json?
+  updatedAt               DateTime?             @updatedAt
+  createdAt               DateTime?             @default(now())
+  deleted                 Boolean?              @default(false)
+
+  // Define relationships
+  Project Projects? @relation(fields: [projectId], references: [id])
+}
+
+//only for contract call
+model Funds {
+  id                          String         @id @default(uuid()) // Assuming "uuid" is a string
+  fundType                    milestoneType?
+  fundTypeId                  String         @unique
+  enableFundTransfer          Boolean?       @default(false)
+  enableRoyalityTransfer      Boolean?       @default(false)
+  fundTransferred             Boolean?       @default(false) // Change this: fundTransferred Float
+  royalityTransferred         Boolean?       @default(false) // Change this: RoyaltyTransferred Float
+  fundTranscationIdToEscrow   String?
+  fundTranscationIdFromEscrow String?
+  royalityTranscationId       String?
+  updatedAt                   DateTime?      @updatedAt
+  createdAt                   DateTime?      @default(now())
+  deleted                     Boolean?       @default(false)
+
+  // relationship
+  Milestones Milestones @relation(fields: [fundTypeId], references: [id])
+}
+
+model Transactions {
+  id        String               @id @default(uuid())
+  from      String //address
+  to        String //address
+  userId    String?
+  type      TransactionsType
+  value     String // milestoneId or submilestoneID based on type
+  amount    Float?
+  status    ContractDeployStatus
+  txHash    String?
+  projectId String?
+  updatedAt DateTime?            @updatedAt
+  createdAt DateTime?            @default(now())
+  deleted   Boolean?             @default(false)
+
+  // relationship
+  User                 User?        @relation(fields: [userId], references: [id])
+  Milestones           Milestones?  @relation(fields: [value], references: [id])
+  Project              Projects?    @relation(fields: [projectId], references: [id])
+  IsDeployedOnContract Milestones[] @relation("IsDeployedOnContract")
+}
+
+enum TransactionParty {
+  PURCHASER
+  CP
+  IP
+  ADMIN
+  ESCROW
+}
+
+enum TransactionsType {
+  ProjectFunded //PROJECT_FUND 
+  MilestoneFunded // MILESTONE_FUND
+  MilestoneStateChanged // MILESTONE_STATE_CHANGED
+  MilestonePayout // MILESTONE_COMPLETED
+  MilestoneForceClosed // MILESTONE_FORCED_CLOSED
+  SubMilestoneStateChanged // SUB_MILESTONE_STATE_CHANGED
+  MilestoneRoyaltyFunded // MILESTONE_ROYALTY_COMPLETED
+  MilestoneRoyaltyForceClosed // MILESTONE_ROYALTY_FORCE_CLOSED
+  SubMilestoneAdded // SUB_MILESTONE_ADDED
+  RoyaltyPaid // RoyaltyPaid
+  FreeBalanceReleased // Free Balance
+  PROJECT_COMPLETED
+  BALANCE_RELEASE
+  MILESTONE_FORCED_CLOSED_FEE
+  MILESTONE_ROYALTY_FORCE_CLOSED_FEE
+  MILESTONE_ROYALTY_COMPLETED_FEE
+  MILESTONE_COMPLETED_FEE
+  PROJECT_COMPLETED_FEE
+  BALANCE_RELEASE_FEE
+}
+
+model Dispute {
+  id                    String          @id @default(uuid())
+  projectId             String?
+  milestoneId           String?
+  disputeNature         DisputeNature
+  raisedBy              String?
+  raisedTo              String?
+  disputeDescription    String?
+  evidenceDocLink       String[] //store uuid of DocumentsLink
+  disputeComment        String?
+  status                DisputeStatus //INREVIEW(When created), CLOSED(Only by raisedBy) or RESOLVED(Only by MO) or LEGALWAY(by RaisedBy or RaisedTo)
+  closedBy              String? //(MO / Dispute member)
+  isMoAgree             Boolean?
+  isRaisedByAgree       Boolean?
+  isRaisedToAgree       Boolean?
+  inFavourOf            String? //ProjectMemberID //only filled when status is resolved
+  resolutionType        ResolutionType?
+  resolutionDescription String?
+  resolutionDocLink     String[]
+  resolutionComment     String?
+  createdAt             DateTime?       @default(now())
+  updatedAt             DateTime?       @updatedAt
+  deleted               Boolean?        @default(false)
+
+  Project    Projects?       @relation(fields: [projectId], references: [id])
+  Milestones Milestones?     @relation(fields: [milestoneId], references: [id])
+  RaisedBy   ProjectMembers? @relation("RaisedBy", fields: [raisedBy], references: [id])
+  RaisedTo   ProjectMembers? @relation("RaisedTo", fields: [raisedTo], references: [id])
+  InFavourOf ProjectMembers? @relation("InFavourOf", fields: [inFavourOf], references: [id])
+  ClosedBy   User?           @relation(fields: [closedBy], references: [id])
+}
+
+enum DisputeNature {
+  FUNDS
+  DEADLINE
+  OTHER
+}
+
+enum DisputeStatus {
+  INREVIEW
+  CLOSED
+  RESOLVED
+  LEGALWAY
+}
+
+enum ResolutionType {
+  FAQ
+  WRITTEN
+}
+
+model FAQS {
+  id        String    @id @default(uuid())
+  question  String?
+  answer    String?
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  deleted   Boolean?  @default(false)
+}
+
+model Notes {
+  id             String   @id @default(uuid())
+  message        String
+  to             String
+  from           String
+  hcsTopicId     String
+  projectId      String
+  milestoneId    String?
+  noteId         String?
+  sequenceNumber String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  To        User        @relation("To", fields: [to], references: [id])
+  From      User        @relation("From", fields: [from], references: [id])
+  Project   Projects    @relation(fields: [projectId], references: [id])
+  Milestone Milestones? @relation(fields: [milestoneId], references: [id])
+  Reply     Notes?      @relation("Reply", fields: [noteId], references: [id])
+  Notes     Notes[]     @relation("Reply")
+}
+
+model Teams {
+  id        String    @id @default(uuid())
+  name      String    @db.VarChar(20)
+  creator   String
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  deleted   Boolean?  @default(false)
+
+  Creator     User          @relation("Creator", fields: [creator], references: [id])
+  TeamMembers TeamMembers[] @relation("Team")
+}
+
+model TeamMembers {
+  id           String    @id @default(uuid())
+  isBookmarked Boolean   @default(false)
+  teamId       String
+  userId       String
+  createdAt    DateTime? @default(now())
+  updatedAt    DateTime? @updatedAt
+  deleted      Boolean?  @default(false)
+
+  User User  @relation("Member", fields: [userId], references: [id])
+  Team Teams @relation("Team", fields: [teamId], references: [id])
+
+  @@unique([teamId, userId])
+}
+
+model Notifications {
+  id          String    @id @default(uuid())
+  recipientId String
+  content     String
+  category    String
+  readAt      DateTime?
+  canceledAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  User User @relation(fields: [recipientId], references: [id])
+
+  @@index([recipientId])
+}
+
+model ProviderList {
+  id        String    @id @default(uuid())
+  creatorId String
+  memberId  String
+  note      String?
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  deleted   Boolean?  @default(false)
+  Creator   User      @relation("ProviderListCreator", fields: [creatorId], references: [id])
+  Member    User      @relation("ProviderListMember", fields: [memberId], references: [id])
+
+  @@unique([creatorId, memberId])
+}
+
+model Collaborators {
+  id                String         @id @default(uuid())
+  purchaserId       String
+  collaboratorEmail String
+  accpetedStatus    AcceptedStatus @default(PENDING)
+  createdAt         DateTime       @default(now())
+  Purchaser         User           @relation("PurchaserId", fields: [purchaserId], references: [id])
+  Collaborator      User           @relation("CollaboratorEmail", fields: [collaboratorEmail], references: [email])
+
+  @@unique([purchaserId, collaboratorEmail])
+}
+
+model Fees {
+  id         String   @id @default(uuid())
+  commission String
+  createdAt  DateTime @default(now())
+}
+
+model Errors {
+  id        String    @id @default(uuid())
+  type      Error
+  metadata  String?
+  body      String?
+  message   String?
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+}
